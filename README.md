@@ -1,24 +1,53 @@
 # [Nombre del Proyecto / Sistema]
-> **Asignatura:** Electrónica Digital [II / III] - Universidad Nacional de Córdoba
-> **Integrantes:** > * Nombre Apellido
-> * Nombre Apellido
-> **Profesor:** [Nombre del Profesor]
+> **Asignatura:** Electrónica Digital III - Universidad Nacional de Córdoba
+> **Integrantes:** > * Martina Ciruzzi
+> * Mauricio Agustin Herrera
+> **Profesor:** Marcos Blasco
 
 ---
 
 ## 🚀 1. Descripción General del Proyecto (Común a DII y DIII)
-Expliquen, en un máximo de dos párrafos, **qué hace el sistema, qué problema resuelve y a quién va dirigido**. Sean claros, concisos y directos.
+
+El proyecto consiste en un sistema automático de control de iluminación implementado sobre el microcontrolador LPC1769. El sistema mide la luz ambiente mediante un sensor TEMT6000 conectado al ADC, adquiere muestras periódicas utilizando Timer0 y almacena bloques de datos mediante GPDMA para luego calcular una medición promedio más estable por medio del promedio.
+
+A partir de la medición obtenida, el firmware estima el nivel de iluminación en milivolts, lux aproximados y porcentaje. El usuario puede ingresar por UART un porcentaje de iluminación deseado entre 0 % y 100 %, y el sistema calcula el error entre la luz deseada y la luz ambiente medida. Con ese error se ajusta el duty cycle de una señal PWM generada con Timer1, aplicada al gate de un MOSFET para regular la intensidad de la carga lumínica. Además, el DAC entrega una salida analógica proporcional a la medición de iluminación en lux y el estado del sistema se reporta periódicamente por terminal serie. El sistema también cuenta con un pulsador asociado a EINT0 para alternar entre estado activo y detenido.
 
 ### 🎯 Alcances del Proyecto (¿Qué hace y qué NO hace el sistema?)
-Delimiten claramente los objetivos alcanzados para la entrega final:
-* **El sistema SÍ es capaz de:** [Ej: Medir temperatura y presión en tiempo real, activar un cooler si se supera el umbral y transmitir los datos por UART cada 1 segundo].
-* **El sistema NO incluye (Fuera de alcance):** [Ej: Almacenamiento local de datos (Data Logging) en tarjeta SD ni conectividad inalámbrica Wi-Fi/Bluetooth].
+
+### Alcances del Proyecto
+
+### Alcances del Proyecto
+
+**El sistema SÍ es capaz de:**
+
+- Medir la iluminación ambiente mediante un sensor TEMT6000 conectado al ADC del LPC1769.
+- Adquirir muestras periódicas usando Timer0 y almacenarlas automáticamente mediante GPDMA.
+- Calcular un valor promedio de iluminación a partir de un bloque de muestras.
+- Convertir la medición obtenida a milivolts, lux aproximados y porcentaje de iluminación.
+- Recibir por UART un porcentaje de iluminación deseado entre 0 % y 100 %.
+- Regular una carga lumínica mediante una señal PWM aplicada al gate de un MOSFET.
+- Entregar por DAC una tensión proporcional a la medición de iluminación.
+- Reportar por UART el estado del sistema, incluyendo valor deseado, medición, error y duty aplicado.
+- Arrancar y detener el funcionamiento mediante un pulsador conectado a EINT0.
+
+**El sistema NO incluye:**
+
+- Conexión por Wi-Fi o Bluetooth.
+- Guardado de datos en memoria o tarjeta SD.
+- Interfaz gráfica para ver los datos.
+- Diseño en PCB.
+- Alimentación con batería.
+
 
 ### ⏩ Posibles Etapas Siguientes (Líneas Futuras)
-Planteen cómo escalaría este desarrollo en una versión 2.0 o en un ámbito profesional:
-* [Ej: Migrar el circuito de protoboard a un circuito impreso (PCB) diseñado bajo normas de compatibilidad electromagnética (EMC)].
-* [Ej: Implementar modos de bajo consumo (Sleep) administrados por hardware para permitir el uso de baterías].
-* [Ej: Diseñar una interfaz gráfica (GUI) en Python o una app móvil para la visualización remota de las variables].
+
+En una versión futura del proyecto se podrían implementar las siguientes mejoras:
+
+- Migrar el circuito armado en protoboard a un circuito impreso (PCB) para obtener un montaje más prolijo, seguro y estable.
+- Agregar conectividad inalámbrica, como Wi-Fi o Bluetooth, para monitorear el sistema de forma remota.
+- Diseñar una interfaz gráfica, ya sea en una aplicación de escritorio o móvil, para visualizar la luz medida, el valor deseado y el duty aplicado.
+- Incorporar almacenamiento de datos para guardar mediciones históricas de iluminación.
+- Agregar un modo de bajo consumo para reducir el consumo cuando el sistema se encuentre detenido.
 
 ---
 
