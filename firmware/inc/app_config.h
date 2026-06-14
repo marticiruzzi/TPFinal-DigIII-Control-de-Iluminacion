@@ -1,0 +1,16 @@
+#ifndef APP_CONFIG_H
+#define APP_CONFIG_H
+
+#define BUFFER_ADC_ADDR 0x2007C000
+#define BUFFER_TAM 64
+
+#define UART_PC UART1
+#define RX_BUFFER_SIZE 16
+
+#define TIM1_PERIODO 4999
+#define ERROR_ZONA_MUERTA 2
+
+#define LUX_MAXIMO 776
+#define MV_MAXIMO 3133
+
+#endif
