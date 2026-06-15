@@ -92,7 +92,7 @@ En una versión futura del proyecto se podrían implementar las siguientes mejor
 
 ---
 
-## 🔄 4. Proceso de Integración y Desarrollo (Común)
+## 🔄 4. Proceso de Integración y Desarrollo
 Describan cronológicamente cómo fueron sumando y testeando las diferentes partes del proyecto (enfoque modular de ingeniería).
 
 * **Etapa 1 (Validación inicial):** Se configuró el pin P0.0 como salida GPIO y se verificó el encendido del LED de prueba. Se configuró el Timer1 con PWM por software y se validó la señal con osciloscopio, probando manualmente distintos valores de duty via cambios en el código. Se verificó también que el MOSFET respondía correctamente a la señal PWM generada.
@@ -102,7 +102,7 @@ Describan cronológicamente cómo fueron sumando y testeando las diferentes part
 
 ---
 
-## 📊 5. Ensayos, Pruebas y Resultados (Común)
+## 📊 5. Ensayos, Pruebas y Resultados
 Demuestren con datos empíricos que el sistema funciona correctamente. **Es obligatorio incluir registro visual**.
 
 * **Pruebas Funcionales Realizadas:**
@@ -113,15 +113,7 @@ Demuestren con datos empíricos que el sistema funciona correctamente. **Es obli
 
 
 
-* **Evidencia Fotográfica y Gráficos:** * *Capturas de instrumental:*
-* https://github.com/user-attachments/assets/d04b160f-7b00-40a7-9371-da4b359fe886
-* https://github.com/user-attachments/assets/ec9590e8-c07a-4986-8deb-8884e89a1a99
-  * *Foto del Prototipo Real:*
-   >
-  <img width="1200" height="1600" alt="PrototipoFinal" src="https://github.com/user-attachments/assets/50256f36-bfc8-433e-8340-ec1009083b11" />
-  <img width="1200" height="1600" alt="PrototipoFinal" src="https://github.com/user-attachments/assets/0b1edfa1-cee7-4cf0-8454-85cf5c20715a" />
-
-
+* **Evidencia Fotográfica y Gráficos:**  Archivos adjuntos en la carpeta docs
 ---
 
 ## 📂 6. Estructura del Repositorio
