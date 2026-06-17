@@ -54,14 +54,28 @@ En una versión futura del proyecto se podrían implementar las siguientes mejor
 ## 📐 2. Arquitectura del Sistema: Hardware y Software (Común)
 
 ### 🔌 Hardware & Interconexión
-* **Diagrama de Bloques:** [Insertar imagen o link al diagrama de bloques del hardware]
-* **Esquemático del Circuito:** *[Inserte aquí la captura de imagen/render del esquemático completo desarrollado en KiCad/Altium]*
-  `![Esquemático Completo](hardware/esquematico.png)`
-* **Descripción del Circuito y Consideraciones de Diseño:** Breve explicación de las etapas (ej: acoplamiento de señales, protecciones inductivas, filtrado, etc.).
+* **Diagrama de Bloques:** <img width="987" height="790" alt="Diagrama_de_Bloques" src="https://github.com/user-attachments/assets/1d13b754-9351-402b-b494-42a38a11d208" />
+
+* **Esquemático del Circuito:** 
+![Esquemático Completo](hardware/esquematico.png)
+  
+### Descripción del Circuito y Consideraciones de Diseño
+
+El circuito está organizado en etapas funcionales. La primera etapa corresponde a la **adquisición de luz ambiente**, realizada mediante el sensor TEMT6000. Este sensor entrega una señal analógica proporcional a la iluminación recibida, la cual se conecta al canal **AD0.0 del LPC1769, pin P0.23**. Dicha señal es digitalizada por el ADC del microcontrolador para obtener una representación numérica del nivel de luz presente en el ambiente.
+
+La segunda etapa corresponde al **procesamiento y almacenamiento de muestras**. Las conversiones del ADC son disparadas periódicamente por el **Timer0**, utilizando la señal de match como evento de disparo. Luego, el **GPDMA** transfiere automáticamente las muestras obtenidas hacia una zona de memoria SRAM, reduciendo la carga de trabajo del procesador. Una vez completado el bloque de muestras, el firmware calcula un valor promedio para disminuir variaciones instantáneas y obtener una medición más estable.
+
+La tercera etapa es la **etapa de control de iluminación**. A partir del porcentaje de luz medido y del porcentaje deseado ingresado por el usuario, el sistema calcula un error y determina el ciclo de trabajo de una señal PWM. Esta señal es generada mediante el **Timer1** y se entrega por el pin **P0.0**, conectado al gate de un MOSFET. El MOSFET funciona como etapa de potencia, permitiendo regular la corriente aplicada a la luminaria sin exigir corriente directamente al pin del microcontrolador.
+
+Además, el sistema incorpora una salida analógica de monitoreo mediante el **DAC del LPC1769**, disponible en el pin **P0.26 / AOUT**. Esta salida entrega una tensión proporcional al nivel de luz medido, permitiendo observar externamente el comportamiento del sistema mediante un multímetro u osciloscopio.
+
+La comunicación con el usuario se realiza mediante **UART1**, utilizando los pines **P0.15 como TXD1** y **P0.16 como RXD1**. Por este medio se recibe el porcentaje de iluminación deseado y se transmite el estado del sistema. También se incluye una entrada externa mediante **EINT0 en P2.10**, utilizada para iniciar o detener el funcionamiento del sistema mediante un pulsador.
+
+Como consideración de diseño, se separa la etapa lógica de control de la etapa de potencia. El LPC1769 opera con niveles de **3,3 V**, por lo que el MOSFET permite manejar la carga de iluminación sin sobrecargar los pines del microcontrolador. Además, se utiliza un promedio de muestras ADC para reducir ruido o fluctuaciones propias de la medición analógica.
 
 ### 💻 Arquitectura de Software (Firmware)
-* **Diagrama de Flujo o Máquina de Estados:** *[Inserte aquí la imagen del diagrama que explique el lazo principal o el comportamiento del sistema]*
-  `![Diagrama de Flujo / Máquina de Estados](docs/diagrama_software.png)`
+* **Diagrama de Flujo o Máquina de Estados:** *
+  `![Máquina de Estados](docs/diagrama_software.png)`
 
 ---
 
