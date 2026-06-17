@@ -11,7 +11,7 @@
 
 ## 🚀 1. Descripción General del Proyecto
 
-El proyecto consiste en un sistema automático de control de iluminación implementado sobre el microcontrolador LPC1769. El sistema mide la luz ambiente mediante un sensor TEMT6000 conectado al ADC, adquiere muestras periódicas utilizando Timer0 y almacena bloques de datos mediante GPDMA para luego calcular una medición promedio más estable por medio del promedio.
+El proyecto consiste en un sistema automático de control de iluminación implementado sobre el microcontrolador LPC1769. El sistema mide la luz ambiente mediante un sensor TEMT6000 conectado al ADC, adquiere muestras periódicas utilizando Timer0 y almacena bloques de datos mediante GPDMA para luego calcular una medición promedio más estable.
 
 A partir de la medición obtenida, el firmware estima el nivel de iluminación en milivolts, lux aproximados y porcentaje. El usuario puede ingresar por UART un porcentaje de iluminación deseado entre 0 % y 100 %, y el sistema calcula el error entre la luz deseada y la luz ambiente medida. Con ese error se ajusta el duty cycle de una señal PWM generada con Timer1, aplicada al gate de un MOSFET para regular la intensidad de la carga lumínica. Además, el DAC entrega una salida analógica proporcional a la medición de iluminación en lux y el estado del sistema se reporta periódicamente por terminal serie. El sistema también cuenta con un pulsador asociado a EINT0 para alternar entre estado activo y detenido.
 
@@ -55,9 +55,12 @@ En una versión futura del proyecto se podrían implementar las siguientes mejor
 ## 📐 2. Arquitectura del Sistema: Hardware y Software
 
 ### 🔌 Hardware & Interconexión
-* **Diagrama de Bloques:** <img width="987" height="790" alt="Diagrama_de_Bloques" src="https://github.com/user-attachments/assets/1d13b754-9351-402b-b494-42a38a11d208" />
+* **Diagrama de Bloques:** 
+
+<img width="987" height="790" alt="Diagrama_de_Bloques" src="https://github.com/user-attachments/assets/1d13b754-9351-402b-b494-42a38a11d208" />
 
 * **Esquemático del Circuito:** 
+
 ![Esquemático Completo](hardware/esquematico.png)
   
 ### Descripción del Circuito y Consideraciones de Diseño
@@ -73,10 +76,13 @@ Además, el sistema incorpora una salida analógica de monitoreo mediante el **D
 La comunicación con el usuario se realiza mediante **UART1**, utilizando los pines **P0.15 como TXD1** y **P0.16 como RXD1**. Por este medio se recibe el porcentaje de iluminación deseado y se transmite el estado del sistema. También se incluye una entrada externa mediante **EINT0 en P2.10**, utilizada para iniciar o detener el funcionamiento del sistema mediante un pulsador.
 
 Como consideración de diseño, se separa la etapa lógica de control de la etapa de potencia. El LPC1769 opera con niveles de **3,3 V**, por lo que el MOSFET permite manejar la carga de iluminación sin sobrecargar los pines del microcontrolador. Además, se utiliza un promedio de muestras ADC para reducir ruido o fluctuaciones propias de la medición analógica.
+La fuente externa de la carga lumínica comparte GND con la placa LPC1769, lo cual permite que la señal PWM tenga una referencia común para controlar correctamente el MOSFET.
 
 ### 💻 Arquitectura de Software (Firmware)
-* **Diagrama de Flujo o Máquina de Estados:** *
-  `![Máquina de Estados](docs/diagrama_software.png)`
+
+* **Diagrama de Flujo o Máquina de Estados:**
+
+![Máquina de Estados](docs/diagrama_software.png)
 
 ---
 
@@ -92,14 +98,14 @@ Como consideración de diseño, se separa la etapa lógica de control de la etap
 * **Microcontrolador Principal:** NXP LPC1769
 * **Bibliotecas de Terceros y Versiones:** No se utilizaron bibliotecas de terceros adicionales
 * **Periféricos Avanzados Utilizados:** NVIC, GPDMA, SysTick, DAC, ADC, Timer, UART, EINT
-* **Estrategia de Concurrencia:** Expliquen la arquitectura elegida: El sistema utiliza arquitectura bare-metal orientada a interrupciones, sin RTOS. El main loop actúa como despachador de tareas diferidas de baja prioridad, mientras que toda la lógica de tiempo real se ejecuta en ISR.
+* **Estrategia de Concurrencia:** El sistema utiliza arquitectura bare-metal orientada a interrupciones, sin RTOS. El main loop actúa como despachador de tareas diferidas de baja prioridad, mientras que toda la lógica de tiempo real se ejecuta en ISR.
 * Arquitectura de interrupciones y prioridades:
   * UART1_IRQHandler : Prioridad ( 0 ) (máxima) - Recepción de comandos por teclado
   * EINT0_IRQHandler : Prioridad ( 2 ) - Arranque y parada del sistema
   * DMA_IRQHandler : Prioridad ( 1 ) - Procesamiento de bloque ADC, cálculo de error, duty PWM y DAC
   * TIMER1_IRQHandler : Prioridad ( 3 ) - Generación de PWM, aplicación del duty pendiente al inicio del período
   * SysTick_Handler: Prioridad ( fijo CM3 ) - Contador de 2 segundos para reporte UART periódico
-* Mecanismo para PWM con dobble buffer:
+* Mecanismo para PWM con doble buffer:
   * Al completarse un bloque de muestras, el DMA dispara una interrupción. En el handler correspondiente se procesa el bloque, se calcula el promedio, el error y el nuevo duty pendiente.
 * Comunicación ISR → main loop via flags volátiles:
   * enviar_estado, aviso_arranque y comando_listo son flags que las ISR activan y el main consume. Esto evita ejecutar UART_Send BLOCKING dentro de interrupciones, que era la causa original del congelamiento del sistema.
@@ -107,7 +113,8 @@ Como consideración de diseño, se separa la etapa lógica de control de la etap
 ---
 
 ## 🔄 4. Proceso de Integración y Desarrollo
-Describan cronológicamente cómo fueron sumando y testeando las diferentes partes del proyecto (enfoque modular de ingeniería).
+
+A continuación se describe el proceso de integración seguido durante el desarrollo del sistema.
 
 * **Etapa 1 (Validación inicial):** Se configuró el pin P0.0 como salida GPIO y se verificó el encendido del LED de prueba. Se configuró el Timer1 con PWM por software y se validó la señal con osciloscopio, probando manualmente distintos valores de duty via cambios en el código. Se verificó también que el MOSFET respondía correctamente a la señal PWM generada.
 * **Etapa 2 (Adquisición/Comunicación):** Se implementó el ADC con trigger por Timer0 (MAT0.1 en toggle) y se enviaron los valores crudos de 12 bits por UART1 a 9600 baud. Se detectó en esta etapa que UART_Send BLOCKING a 9600 baud generaba períodos de bloqueo demasiado largos. Se migró a 115200 baud y se ajustaron las prioridades del NVIC, con UART1 en prioridad 0 para evitar que Timer1 interrumpiera la transmisión. Se validó la recepción de comandos numéricos por teclado con eco de confirmación.
@@ -117,26 +124,23 @@ Describan cronológicamente cómo fueron sumando y testeando las diferentes part
 ---
 
 ## 📊 5. Ensayos, Pruebas y Resultados
-Demuestren con datos empíricos que el sistema funciona correctamente. **Es obligatorio incluir registro visual**.
+Se realizaron pruebas funcionales sobre adquisición, comunicación, control PWM y salida DAC.
 
 * **Pruebas Funcionales Realizadas:**
   * Se testeo la obtencion de los datos del Sensor TEMT6000 regulando la luz ambiente, verificando si los datos obtenidos por el sensor coincidian con los porcentajes inyectados, ademas se testeo si respondia correctamente el PWM cuando se llegaba al valor del SetPoint y si la comunicacion Serie estaba en correcto funcionamiento
   * Se testeo la salida del DAC variando la intensidad luminica del ambiente
 
- 
 
-
-
-* **Evidencia Fotográfica y Gráficos:**  Archivos adjuntos en la carpeta docs
+* **Evidencia Fotográfica y Gráficos:**  Disponibles en la carpeta `docs/`, incluyendo capturas de instrumental y fotos del prototipo final.
 ---
 
 ## 📂 6. Estructura del Repositorio
-El repositorio debe mantener obligatoriamente la siguiente estructura limpia (¡Recuerden configurar correctamente el `.gitignore` para no subir carpetas temporales como `Debug/`, `Release/` o archivos `.p1` / `.d`!).
 
 ```text
-├── firmware/          # Código fuente del proyecto (MPLABX / MCUXpresso / STM32Cube)
+├── firmware/          # Código fuente del proyecto (MCUXpresso)
 │   ├── src/           # Archivos de código (.c)
 │   └── inc/           # Archivos de cabecera (.h)
-├── hardware/          # Archivos de diseño (KiCad/Altium), esquemáticos en PDF/Imagen y BOM
-├── docs/              # Datasheets clave, imágenes del README, notas de aplicación
+├── hardware/          # Archivos de diseño (KiCad)
+├── docs/              # Datasheets clave, imágenes del README
 └── README.md          # Este archivo de presentación
+```
