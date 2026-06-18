@@ -69,7 +69,7 @@ La segunda etapa corresponde al **procesamiento y almacenamiento de muestras**. 
 
 La tercera etapa es la **etapa de control de iluminación**. A partir del porcentaje de luz medido y del porcentaje deseado ingresado por el usuario, el sistema calcula un error y determina el ciclo de trabajo de una señal PWM. Esta señal es generada mediante el **Timer1** y se entrega por el pin **P0.0**, conectado al gate de un MOSFET. El MOSFET funciona como etapa de potencia, permitiendo regular la corriente aplicada a la luminaria sin exigir corriente directamente al pin del microcontrolador.
 
-Además, el sistema incorpora una salida analógica de monitoreo mediante el **DAC del LPC1769**, disponible en el pin **P0.26 / AOUT**. Esta salida entrega una tensión proporcional al nivel de luz medido, permitiendo observar externamente el comportamiento del sistema mediante un multímetro u osciloscopio.
+Además, el sistema incorpora una salida analógica de monitoreo mediante el **DAC del LPC1769**, disponible en el pin **P0.26 / AOUT**. Esta salida entrega una tensión en mV proporcional al nivel de luz medido en lux, permitiendo observar externamente el comportamiento del sistema mediante un multímetro u osciloscopio.
 
 La comunicación con el usuario se realiza mediante **UART1**, utilizando los pines **P0.15 como TXD1** y **P0.16 como RXD1**. Por este medio se recibe el porcentaje de iluminación deseado y se transmite el estado del sistema. También se incluye una entrada externa mediante **EINT0 en P2.10**, utilizada para iniciar o detener el funcionamiento del sistema mediante un pulsador.
 
