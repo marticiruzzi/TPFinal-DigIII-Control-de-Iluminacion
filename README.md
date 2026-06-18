@@ -90,7 +90,7 @@ La fuente externa de la carga lumínica comparte GND con la placa LPC1769, lo cu
 
 ## ⚡ 3. Especificaciones Eléctricas, Alimentación y Entorno
 
-### 🔌 Parámetros de Alimentación y Consumo (Común a ambas materias)
+### 🔌 Parámetros de Alimentación y Consumo 
 * **Tensión de operación del sistema:** 3.3V (lógica del LPC1769) y 7V (alimentación del LED de potencia vía MOSFET)
 * **Método de alimentación:** Placa LPC1769: alimentación por USB (5V) con regulador interno a 3.3V -  Etapa de potencia (Carga LED externa controlada por un MOSFET IRLZ44N): fuente externa de 7V - Sensor TEMT6000: 3.3V tomados directamente de la placa
 * **Consumo estimado o medido:**
