@@ -11,9 +11,10 @@
 
 ## 🚀 1. Descripción General del Proyecto
 
-El proyecto consiste en un sistema automático de control de iluminación implementado sobre el microcontrolador LPC1769. El sistema mide la luz ambiente mediante un sensor TEMT6000 conectado al ADC, adquiere muestras periódicas utilizando Timer0 y almacena bloques de datos mediante GPDMA para luego calcular una medición promedio más estable.
+El proyecto consiste en un sistema automático de control de iluminación para ambientes interiores, implementado sobre el microcontrolador LPC1769. El sistema mide la luz ambiente mediante un sensor, permite que el usuario defina un nivel de iluminación deseado y regula automáticamente la intensidad de una carga lumínica para acercarse a ese valor.
 
-A partir de la medición obtenida, el firmware estima el nivel de iluminación en milivolts, lux aproximados y porcentaje. El usuario puede ingresar por UART un porcentaje de iluminación deseado entre 0 % y 100 %, y el sistema calcula el error entre la luz deseada y la luz ambiente medida. Con ese error se ajusta el duty cycle de una señal PWM generada con Timer1, aplicada al gate de un MOSFET para regular la intensidad de la carga lumínica. Además, el DAC entrega una salida analógica proporcional a la medición de iluminación en lux y el estado del sistema se reporta periódicamente por terminal serie. El sistema también cuenta con un pulsador asociado a EINT0 para alternar entre estado activo y detenido.
+Este desarrollo busca mantener una iluminación estable frente a variaciones externas, como cambios en la luz natural o en las condiciones del ambiente, reduciendo la necesidad de ajustes manuales. Está dirigido a aplicaciones educativas, de automatización básica y de control de iluminación en espacios interiores, donde se requiera una solución simple, configurable y monitoreable desde una terminal serie.
+
 
 ### 🎯 Alcances del Proyecto (¿Qué hace y qué NO hace el sistema?)
 
