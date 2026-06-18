@@ -17,8 +17,6 @@ A partir de la medición obtenida, el firmware estima el nivel de iluminación e
 
 ### 🎯 Alcances del Proyecto (¿Qué hace y qué NO hace el sistema?)
 
-### Alcances del Proyecto
-
 **El sistema SÍ es capaz de:**
 
 - Medir la iluminación ambiente mediante un sensor TEMT6000 conectado al ADC del LPC1769.
@@ -91,7 +89,8 @@ La fuente externa de la carga lumínica comparte GND con la placa LPC1769, lo cu
 ### 🔌 Parámetros de Alimentación y Consumo (Común a ambas materias)
 * **Tensión de operación del sistema:** 3.3V (lógica del LPC1769) y 7V (alimentación del LED de potencia vía MOSFET)
 * **Método de alimentación:** Placa LPC1769: alimentación por USB (5V) con regulador interno a 3.3V -  Etapa de potencia (Carga LED externa controlada por un MOSFET IRLZ44N): fuente externa de 7V - Sensor TEMT6000: 3.3V tomados directamente de la placa
-* **Consumo estimado o medido:** * En modo activo (Depende principalmente de la corriente de la carga LED externa y del duty aplicado. Se estima para la etapa LED + MOSFET en máxima conducción.): `300 - 600 mA`
+* **Consumo estimado o medido:**
+  * En modo activo (Depende principalmente de la corriente de la carga LED externa y del duty aplicado. Se estima para la etapa LED + MOSFET en máxima conducción.): `300 - 600 mA`
   * En modo bajo consumo (Estado Detenido - Solo LPC1769 + Sensor): `55 mA medidos aproximadamente`
 
 * **IDE y SDK:** MCUXpresso IDE v11.x con drivers CMSIS v2p00 para LPC17xx refactorizados por David Trujillo Medina (versión 2026)
@@ -119,7 +118,7 @@ A continuación se describe el proceso de integración seguido durante el desarr
 * **Etapa 1 (Validación inicial):** Se configuró el pin P0.0 como salida GPIO y se verificó el encendido del LED de prueba. Se configuró el Timer1 con PWM por software y se validó la señal con osciloscopio, probando manualmente distintos valores de duty via cambios en el código. Se verificó también que el MOSFET respondía correctamente a la señal PWM generada.
 * **Etapa 2 (Adquisición/Comunicación):** Se implementó el ADC con trigger por Timer0 (MAT0.1 en toggle) y se enviaron los valores crudos de 12 bits por UART1 a 9600 baud. Se detectó en esta etapa que UART_Send BLOCKING a 9600 baud generaba períodos de bloqueo demasiado largos. Se migró a 115200 baud y se ajustaron las prioridades del NVIC, con UART1 en prioridad 0 para evitar que Timer1 interrumpiera la transmisión. Se validó la recepción de comandos numéricos por teclado con eco de confirmación.
 * **Etapa 3 (Integración lógica):** Se incorporó el GPDMA con LLI circular para transferir automáticamente las conversiones del ADC al buffer en SRAM (0x2007C000). Se eliminó la interrupción del ADC, delegando todo el flujo al DMA. Se tomaron mediciones empíricas del sensor TEMT6000 con un luxómetro a distintos niveles de iluminación, construyendo la tabla de calibración de 6 tramos (luego extendida a 7) con interpolación lineal por tramos en aritmética entera. Se detectó y corrigió el problema del 1% detectado como 0% ajustando el primer tramo para devolver 1 directamente en lugar de aplicar división entera. Se agregó el DAC con salida proporcional al voltaje medido por el sensor, verificable con osciloscopio.
-* **Etapa 4 (Sistema Completo):** Se integró la lógica de control completa: cálculo de error, zona muerta de ±2% para eliminar el parpadeo del PWM cerca del setpoint, y doble buffer duty_pwm/duty_pwm_pendiente para aplicar cambios de duty solo al inicio del período. Se realizaron pruebas de estrés subiendo el nivel de luz del ambiente al máximo, donde se detectó el congelamiento del UART por acumulación de flags del SysTick. Se corrigió reseteando contador_2_segundos al procesar cada comando y cancelando flags pendientes. Se calibró el valor ADC_MAX_CALIBRADO midiendo el voltaje real del sensor a máxima iluminación con luxómetro. Se validó el sistema completo en la caja controlada con el foco LED regulable desde el celular como fuente de luz del ambiente.
+* **Etapa 4 (Sistema Completo):** Se integró la lógica de control completa: cálculo de error, zona muerta de ±2% para eliminar el parpadeo del PWM cerca del setpoint, y doble buffer duty_pwm/duty_pwm_pendiente para aplicar cambios de duty solo al inicio del período. Se realizaron pruebas de estrés subiendo el nivel de luz del ambiente al máximo, donde se detectó el congelamiento del UART por acumulación de flags del SysTick. Se corrigió reseteando contador_2_segundos al procesar cada comando y cancelando flags pendientes. Se calibraron los valores MV_MAXIMO = 3133 mV y LUX_MAXIMO = 776 lux, usados como referencia para la conversión de la medición a porcentaje midiendo el voltaje real del sensor a máxima iluminación con luxómetro. Se validó el sistema completo en la caja controlada con el foco LED regulable desde el celular como fuente de luz del ambiente.
 
 ---
 
@@ -140,7 +139,7 @@ Se realizaron pruebas funcionales sobre adquisición, comunicación, control PWM
 ├── firmware/          # Código fuente del proyecto (MCUXpresso)
 │   ├── src/           # Archivos de código (.c)
 │   └── inc/           # Archivos de cabecera (.h)
-├── hardware/          # Archivos de diseño (KiCad)
+├── hardware/          # Captura y PDF del esquemático desarrollado en KiCad
 ├── docs/              # Datasheets clave, imágenes del README
 └── README.md          # Este archivo de presentación
 ```
