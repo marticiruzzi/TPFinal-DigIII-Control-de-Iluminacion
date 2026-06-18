@@ -55,11 +55,13 @@ En una versión futura del proyecto se podrían implementar las siguientes mejor
 ### 🔌 Hardware & Interconexión
 * **Diagrama de Bloques:** 
 
-<img width="987" height="790" alt="Diagrama_de_Bloques" src="https://github.com/user-attachments/assets/1d13b754-9351-402b-b494-42a38a11d208" />
+![Diagrama de Bloques](docs/diagrama_bloques.png)
+
 
 * **Esquemático del Circuito:** 
 
 ![Esquemático Completo](hardware/esquematico.png)
+
   
 ### Descripción del Circuito y Consideraciones de Diseño
 
@@ -81,6 +83,7 @@ La fuente externa de la carga lumínica comparte GND con la placa LPC1769, lo cu
 * **Diagrama de Flujo o Máquina de Estados:**
 
 ![Máquina de Estados](docs/diagrama_software.png)
+
 
 ---
 
@@ -130,7 +133,7 @@ Se realizaron pruebas funcionales sobre adquisición, comunicación, control PWM
   * Se testeo la salida del DAC variando la intensidad luminica del ambiente
 
 
-* **Evidencia Fotográfica y Gráficos:**  Disponibles en la carpeta `docs/`, incluyendo capturas de instrumental y fotos del prototipo final.
+* **Evidencia Fotográfica y Gráficos:**  Disponibles en el archivo `docs/README.md`, incluyendo capturas de instrumental y fotos del prototipo final.
 ---
 
 ## 📂 6. Estructura del Repositorio
